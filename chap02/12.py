@@ -1,5 +1,5 @@
 path = "./hightemp.txt"
-col1path = "col1.txt"
+col1path = "./col1.txt"
 col2path = "./col2.txt"
 
 cols1 = []
