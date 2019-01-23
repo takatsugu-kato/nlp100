@@ -1,8 +1,8 @@
 import sys
 import math
 args = sys.argv
-# split = int(args[1])
-split = 7
+split = int(args[1])
+
 path = "./hightemp.txt"
 with open(path, "r", encoding="utf-8") as f:
     datas = f.readlines()
