@@ -4,8 +4,9 @@ import re
 
 def print_category(lines):
     pattern = r'\[\[Category:'
+    repatter = re.compile(pattern)
     for line in lines:
-        result = re.match(pattern, line)
+        result = repatter.match(line)
         if (result):
             print (line)
 
