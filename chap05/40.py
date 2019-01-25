@@ -1,3 +1,5 @@
+import re
+
 class Morph:
     def __init__(self, s, b, p, p1):
         self.surface = s
@@ -8,29 +10,53 @@ class Morph:
         return 'surface[{}]\tbase[{}]\tpos[{}]\tpos1[{}]'\
             .format(self.surface, self.base, self.pos, self.pos1)
 
+class Chunk:
+    def __init__(self):
+        self.morphs = []
+        self.dst = ""
+        self.srcs = []
+    def __str__(self):
+        surface = ''
+        for morph in self.morphs:
+            surface += morph.surface
+        return '{}\tdst[{}]\tsrcs{}'\
+            .format(surface, self.dst, self.srcs)
+
 def parse_neko(path):
     sentences = []
-    sentence = []
+    chunks = dict()
+    chunk_id = -1
     with open(path, 'r', encoding='utf-8') as f:
         for line in f:
             line = line.replace('\n','')
             if (line[0] == "*"):
+                temp = line.split(' ')
+                chunk_id = int(temp[1])
+                dst = int(re.search(r'(.*?)D', temp[2]).group(1))
+                if chunk_id not in chunks.keys():
+                    chunks[chunk_id] = Chunk()
+                chunks[chunk_id].dst = dst
+                if (dst > 0):
+                    if dst not in chunks.keys():
+                        chunks[dst] = Chunk()
+                    chunks[dst].srcs.append(chunk_id)
                 continue
             if (line == "EOS"):
-                if (sentence):
-                    sentences.append(sentence)
-                sentence = []
+                if (chunks):
+                    sorted_chunks = sorted(chunks.items(), key=lambda x: x[0])
+                    sentences.append(list(zip(*sorted_chunks))[1])#それぞれのchunkのkey0に値０がはいるので
+                chunks = dict()
                 continue
             else:
                 morpheme = {}
                 temp = line.split('\t')
                 temp_morpheme = temp[1].split(',')
                 morpheme = Morph(temp[0], temp_morpheme[6], temp_morpheme[0], temp_morpheme[1])
-                sentence.append(morpheme)
+                chunks[chunk_id].morphs.append(morpheme)
     return sentences
 
 cabocha_file = "./neko.txt.cabocha"
 morpheme_neko = parse_neko(cabocha_file)
 
-for mor in morpheme_neko[2]:
-    print (mor)
+for i, chunks in enumerate(morpheme_neko[7]):
+    print (f'[{i}]{chunks}')
