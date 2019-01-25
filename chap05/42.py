@@ -13,7 +13,7 @@ class Morph:
 class Chunk:
     def __init__(self):
         self.morphs = []
-        self.dst = ""
+        self.dst = int()
         self.srcs = []
     def __str__(self):
         surface = ''
@@ -21,6 +21,12 @@ class Chunk:
             surface += morph.surface
         return '{}\tdst[{}]\tsrcs{}'\
             .format(surface, self.dst, self.srcs)
+    def get_chunk_surface(self):
+        surface = ''
+        for morph in self.morphs:
+            if(morph.pos != "記号"):
+                surface += morph.surface
+        return surface
 
 def parse_neko(path):
     sentences = []
@@ -58,5 +64,11 @@ def parse_neko(path):
 cabocha_file = "./neko.txt.cabocha"
 morpheme_neko = parse_neko(cabocha_file)
 
-for i, chunks in enumerate(morpheme_neko[7]):
-    print (f'[{i}]{chunks}')
+for i, sentence in enumerate(morpheme_neko):
+    print (i)
+    for j in range(len(sentence)):
+        if (sentence[j].dst > 0):
+            src = sentence[j].get_chunk_surface()
+            dst = sentence[sentence[j].dst].get_chunk_surface()
+            if (src != ""):
+                print (src + "\t" + dst)
