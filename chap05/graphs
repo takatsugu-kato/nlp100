@@ -1,0 +1,12 @@
+digraph {
+	node [fontname="C:\WINDOWS\Fonts\msgothic.ttc" shape=square style=filled]
+	literal_1_0 [label="どこで"]
+	literal_1_1 [label="生れたか"]
+	literal_1_2 [label="とんと"]
+	literal_1_3 [label="見当が"]
+	literal_1_4 [label="つかぬ"]
+	literal_1_0 -> literal_1_1
+	literal_1_1 -> literal_1_4
+	literal_1_2 -> literal_1_4
+	literal_1_3 -> literal_1_4
+}
