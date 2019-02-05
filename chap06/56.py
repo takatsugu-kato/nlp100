@@ -18,44 +18,31 @@ def getAnnotate (text):
     return output
 
 class Mention:
-    def __init__(self, sentence, start, end, head, text):
+    def __init__(self, sentence, start, end, head, text, representative):
         self.sentence = sentence
         self.start = start
         self.end = end
         self.head = head
         self.text = text
+        self.representative = representative
     def __str__(self):
         return 'sentence[{}]\tstart[{}]\tend[{}]\thead[{}]\ttext[{}]'\
             .format(self.sentence, self.start, self.end, self.head, self.text)
 
-class Coreference:
-    def __init__(self):
-        self.representative = ""
-        self.mentions = []
-    def __str__(self):
-        surface = ''
-        for mention in self.mentions:
-            surface += mention.text
-        return surface
-
 def createCoreferences(et):
-    coreferences_xml = et.iterfind('./document/coreference/coreference')
     coreferences = []
+    coreferences_xml = et.iterfind('./document/coreference/coreference')
     for mentions_xml in coreferences_xml:
-        coreference = Coreference()
+        representative = mentions_xml.findtext('./mention[@representative="true"]/text')
         for mention_xml in mentions_xml:
-            # if mention.attrib(representative)
-            sentence = mention_xml.find("sentence").text
-            start = mention_xml.find("start").text
-            end = mention_xml.find("end").text
-            head = mention_xml.find("head").text
-            text = mention_xml.find("text").text
-            mention = Mention(sentence,start,end,head,text)
-            if mention_xml.attrib.get("representative") == "true":
-                coreference.representative = mention
-            else:
-                coreference.mentions.append(mention)
-        coreferences.append(coreference)
+            if not mention_xml.attrib.get("representative") == "true":
+                sentence = mention_xml.find("sentence").text
+                start = mention_xml.find("start").text
+                end = mention_xml.find("end").text
+                head = mention_xml.find("head").text
+                text = mention_xml.find("text").text
+                mention = Mention(sentence,start,end,head,text,representative)
+                coreferences.append(mention)
     return coreferences
 
 lines = parseLines(path)
@@ -75,14 +62,12 @@ for line in lines:
 
             to_print_word = tokens[i].find('word').text
             ##coreferencesに該当するか確認
-            for coreference in coreferences:
-                for mention in coreference.mentions:
-                    to_print_mention_word = to_print_word
-                    if mention.sentence == sentence_id and mention.start == token_id:
-                        for num in range(int(mention.end) - int(mention.start) - 1):
-                            to_print_mention_word = to_print_mention_word + " " + tokens[i+1].find("word").text
-                            i = i + 1
-                        to_print_word = coreference.representative.text + " (" + to_print_mention_word + ")"
-                        break
+            found=next((mention for mention in coreferences if mention.sentence==sentence_id and mention.start==token_id) ,None)
+            if found:
+                to_print_mention_word = to_print_word
+                for num in range(int(found.end) - int(found.start) - 1):
+                    to_print_mention_word = to_print_mention_word + " " + tokens[i+1].find("word").text
+                    i = i + 1
+                to_print_word = found.representative + " (" + to_print_mention_word + ")"
             i = i + 1
             print (to_print_word)
