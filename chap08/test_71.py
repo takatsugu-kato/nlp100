@@ -8,6 +8,8 @@ class TestCalc(unittest.TestCase):
   # 4.テストメソッド名は「test_テスト対象のメソッド名」とする(以下同)
   def test_hasStopWord(self):
     self.assertEqual(True, nlp71.isStopWord("the")) 
-    self.assertEqual(False, nlp71.isStopWord("aa"))
-    self.assertEqual(True, nlp71.isStopWord("a"))
-    self.assertEqual(True, nlp71.isStopWord("aaa"))
+    self.assertEqual(True, nlp71.isStopWord("as"))
+    self.assertEqual(True, nlp71.isStopWord("and"))
+    self.assertEqual(False, nlp71.isStopWord("aaa"))
+if __name__ == "__main__":
+    unittest.main()
