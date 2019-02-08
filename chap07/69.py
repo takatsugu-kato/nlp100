@@ -2,7 +2,7 @@ from flask import Flask, current_app, request, flash,redirect,url_for,render_tem
 from flask_pymongo import PyMongo
 from dateutil.parser import parse
 import pymongo
-from json2html import *
+from json2html import json2html
 
 app = Flask(__name__)
 app.secret_key = 'secret'
