@@ -23,5 +23,3 @@ could,i,on,their,what,\
 d,if,one,them,when"
 
 stop_words = stop_words.split(",")
-
-print (isStopWord("when"))
